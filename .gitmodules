@@ -4,3 +4,6 @@
 [submodule "awesome-copilot"]
 	path = awesome-copilot
 	url = https://github.com/assistarmy2024/awesome-copilot.git
+[submodule "zeroclaw"]
+	path = zeroclaw
+	url = https://github.com/openagen/zeroclaw.git

@@ -4,10 +4,13 @@
 
 | Repo | Path | Purpose |
 |------|------|---------|
-| [openclaws](https://github.com/assistarmy2024/openclaws) | `./openclaws/` | Self-hosted personal AI assistant |
+| [openclaws](https://github.com/assistarmy2024/openclaws) | `./openclaws/` | Full-featured self-hosted AI assistant (TypeScript, Node.js) |
+| [zeroclaw](https://github.com/openagen/zeroclaw) | `./zeroclaw/` | Lite/edge AI assistant runtime (Rust, <5MB RAM, single binary) |
 | [awesome-copilot](https://github.com/assistarmy2024/awesome-copilot) | `./awesome-copilot/` | Community library of agents, prompts, skills |
 
-> See [docs/awesome-copilot-integration.md](docs/awesome-copilot-integration.md) for the integration guide.
+**Integration guides:**
+- [docs/zeroclaw-integration.md](docs/zeroclaw-integration.md) — ZeroClaw as a lite/edge runtime, deployment patterns with OpenClaw
+- [docs/awesome-copilot-integration.md](docs/awesome-copilot-integration.md) — porting skills and MCP bridge setup
 
 ---
 
