@@ -1,5 +1,16 @@
 # AE
 
+## Submodules
+
+| Repo | Path | Purpose |
+|------|------|---------|
+| [openclaws](https://github.com/assistarmy2024/openclaws) | `./openclaws/` | Self-hosted personal AI assistant |
+| [awesome-copilot](https://github.com/assistarmy2024/awesome-copilot) | `./awesome-copilot/` | Community library of agents, prompts, skills |
+
+> See [docs/awesome-copilot-integration.md](docs/awesome-copilot-integration.md) for the integration guide.
+
+---
+
 ## OpenClaw System
 
 This repository includes the [OpenClaw](https://github.com/assistarmy2024/openclaws) personal AI assistant system, cloned into the `openclaws/` directory.

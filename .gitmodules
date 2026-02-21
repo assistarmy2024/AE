@@ -1,3 +1,6 @@
 [submodule "openclaws"]
 	path = openclaws
 	url = https://github.com/assistarmy2024/openclaws.git
+[submodule "awesome-copilot"]
+	path = awesome-copilot
+	url = https://github.com/assistarmy2024/awesome-copilot.git
