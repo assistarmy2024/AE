@@ -18,7 +18,7 @@
 
 import { Suspense, useRef, useCallback } from "react";
 import Spline from "@splinetool/react-spline";
-import type { Application } from "@splinetool/runtime";
+import type { Application, SplineEvent } from "@splinetool/runtime";
 
 // ─── Scene URLs ────────────────────────────────────────────────────────────
 // Replace these with your own exported Spline scenes.
@@ -44,7 +44,7 @@ interface SplineSceneProps {
   /** Called when the Spline Application is ready — gives you programmatic control */
   onLoad?: (spline: Application) => void;
   /** Emit a Spline event (e.g. trigger animations) */
-  onSplineMouseDown?: (e: CustomEvent) => void;
+  onSplineMouseDown?: (e: SplineEvent) => void;
 }
 
 // ─── Loading skeleton ──────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ export function DesktopBgSpline() {
  */
 export function triggerSplineEvent(
   spline: Application,
-  eventName: string,
+  eventName: Parameters<Application["emitEvent"]>[0],
   objectName: string
 ) {
   spline.emitEvent(eventName, objectName);
@@ -175,7 +175,7 @@ export function triggerSplineEvent(
 export function setSplineVariable(
   spline: Application,
   name: string,
-  value: unknown
+  value: string | number | boolean
 ) {
   spline.setVariable(name, value);
 }

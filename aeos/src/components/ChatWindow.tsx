@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mic, Paperclip, Sparkles, CheckCircle, XCircle, Clock } from "lucide-react";
-import { useAEOSStore, Activity, Message } from "@/store/useAEOSStore";
+import { Send, Mic, Paperclip } from "lucide-react";
+import { useAEOSStore, Message } from "@/store/useAEOSStore";
 import { ActivityCard } from "./ActivityCard";
 import clsx from "clsx";
 
@@ -31,9 +31,8 @@ function ThinkingBubble() {
 }
 
 function MessageBubble({ msg }: { msg: Message }) {
-  const { approveActivity, rejectActivity, autoApprove } = useAEOSStore();
+  const { approveActivity, rejectActivity } = useAEOSStore();
   const isUser = msg.role === "user";
-  const isSyd  = msg.role === "syd";
   const isSys  = msg.role === "system";
 
   if (isSys) {

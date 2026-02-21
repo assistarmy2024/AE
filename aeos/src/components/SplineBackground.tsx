@@ -10,8 +10,8 @@
 
 import { useEffect } from "react";
 
-// Augment JSX to support the Spline web component element
-declare global {
+// Augment React's JSX to support the Spline web component (React 18+)
+declare module "react" {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
