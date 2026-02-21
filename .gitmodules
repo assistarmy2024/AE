@@ -1,0 +1,3 @@
+[submodule "openclaws"]
+	path = openclaws
+	url = https://github.com/assistarmy2024/openclaws.git
