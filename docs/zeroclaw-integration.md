@@ -140,6 +140,93 @@ otel_service_name = "zeroclaw-edge"
 
 ---
 
+## Full config reference
+
+```toml
+api_key          = "sk-..."
+default_provider = "openrouter"
+default_model    = "anthropic/claude-sonnet-4-6"
+default_temperature = 0.7
+
+[agent]
+max_tool_iterations  = 10
+max_history_messages = 50
+compact_context      = false   # set true for small (13B) models
+
+[memory]
+backend            = "sqlite"  # "sqlite" | "postgres" | "markdown" | "none"
+auto_save          = true
+embedding_provider = "none"    # "none" | "openai" | "custom:https://..."
+vector_weight      = 0.7
+keyword_weight     = 0.3
+
+[gateway]
+port           = 3000
+host           = "127.0.0.1"
+require_pairing = true
+
+[autonomy]
+level           = "supervised"  # "readonly" | "supervised" | "full"
+workspace_only  = true
+allowed_commands = ["git", "npm", "cargo"]
+forbidden_paths  = ["/etc", "~/.ssh", "~/.aws"]
+
+[runtime]
+kind = "native"   # "native" | "docker"
+
+[tunnel]
+provider = "none"  # "none" | "cloudflare" | "tailscale" | "ngrok"
+
+[skills]
+open_skills_enabled = false   # community skill registry
+prompt_injection_mode = "full" # "compact" for low-context models
+
+[heartbeat]
+enabled           = false
+interval_minutes  = 30
+
+[observability]
+backend           = "none"  # "none" | "log" | "prometheus" | "otel"
+otel_endpoint     = "http://localhost:4318"
+otel_service_name = "zeroclaw"
+```
+
+---
+
+## Skills in ZeroClaw
+
+ZeroClaw has its **own SKILL.md system** compatible with awesome-copilot's format.
+Skills live in `~/.zeroclaw/workspace/skills/<name>/`:
+
+```toml
+# SKILL.toml manifest
+[skill]
+name        = "web-scraper"
+description = "Extract data from web pages"
+version     = "0.1.0"
+tags        = ["web", "automation"]
+
+[[tools]]
+name        = "scrape_page"
+description = "Scrape HTML from URL"
+kind        = "http"   # "shell" | "script" | "http"
+```
+
+Skills can also carry a `SKILL.md` instructions file (same format as OpenClaw and
+awesome-copilot). This means the 8 skills ported in
+[awesome-copilot-integration.md](awesome-copilot-integration.md) and the
+`scripts/port-skill.sh` adapter can target ZeroClaw too.
+
+### Manage skills
+
+```bash
+zeroclaw skills list
+zeroclaw skills install <name>
+zeroclaw skills remove <name>
+```
+
+---
+
 ## Architecture
 
 ZeroClaw uses **trait-driven, swappable** modules — everything is a replaceable
@@ -191,17 +278,59 @@ to what OpenClaw exposes through its `nodes.*` tool namespace.
 Use ZeroClaw on-device for hardware control, pipe results back to OpenClaw's
 gateway via webhook for higher-level reasoning and channel routing.
 
-### 4. awesome-copilot prompts on ZeroClaw
+### 4. Memory migration (OpenClaw → ZeroClaw and back)
 
-ZeroClaw doesn't have a SKILL.md system, but you can inject awesome-copilot
-agent/prompt content as the ZeroClaw system prompt:
+ZeroClaw ships a built-in migration command:
+
+```bash
+# Import OpenClaw conversation memory into ZeroClaw
+zeroclaw migrate openclaw --source ~/.openclaw/workspace
+
+# Both use SQLite by default; can also share a PostgreSQL backend
+# config.toml: memory.backend = "postgres"
+# openclaw.json: memory.backend = "postgres"
+```
+
+### 5. awesome-copilot skills on ZeroClaw
+
+ZeroClaw has its own SKILL.md-compatible system. Use the same adapter script:
+
+```bash
+# Port from awesome-copilot → ZeroClaw workspace
+cp -r openclaws/skills/meeting-minutes ~/.zeroclaw/workspace/skills/
+cp -r openclaws/skills/prd ~/.zeroclaw/workspace/skills/
+# etc.
+```
+
+Or inject agent content directly as a ZeroClaw system prompt override:
 
 ```toml
 [agent]
 system_prompt = """
-<paste awesome-copilot agent content here>
+<paste awesome-copilot agent/prompt content here>
 """
 ```
+
+### 6. Run ZeroClaw as a system service
+
+```bash
+# Install as systemd / OpenRC service
+zeroclaw service install
+
+# Then manage with standard service tools
+systemctl --user start zeroclaw
+systemctl --user enable zeroclaw
+systemctl --user status zeroclaw
+```
+
+### 7. Expose via tunnel (no port forwarding)
+
+```toml
+[tunnel]
+provider = "cloudflare"   # or "tailscale" | "ngrok"
+```
+
+Then ZeroClaw's webhook gateway is reachable externally without opening router ports.
 
 ---
 
