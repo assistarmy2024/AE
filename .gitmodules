@@ -7,3 +7,6 @@
 [submodule "zeroclaw"]
 	path = zeroclaw
 	url = https://github.com/openagen/zeroclaw.git
+[submodule "picoclaw"]
+	path = picoclaw
+	url = https://github.com/sipeed/picoclaw.git

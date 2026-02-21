@@ -4,13 +4,20 @@
 
 | Repo | Path | Purpose |
 |------|------|---------|
-| [openclaws](https://github.com/assistarmy2024/openclaws) | `./openclaws/` | Full-featured self-hosted AI assistant (TypeScript, Node.js) |
-| [zeroclaw](https://github.com/openagen/zeroclaw) | `./zeroclaw/` | Lite/edge AI assistant runtime (Rust, <5MB RAM, single binary) |
+| [openclaws](https://github.com/assistarmy2024/openclaws) | `./openclaws/` | Full-featured self-hosted AI assistant (TypeScript, Node.js, >1GB RAM) |
+| [zeroclaw](https://github.com/openagen/zeroclaw) | `./zeroclaw/` | Edge AI assistant runtime (Rust, <5MB RAM, <10ms startup) |
+| [picoclaw](https://github.com/sipeed/picoclaw) | `./picoclaw/` | Ultra-lite AI assistant (Go, <10MB RAM, <1s startup, $10 hardware) |
 | [awesome-copilot](https://github.com/assistarmy2024/awesome-copilot) | `./awesome-copilot/` | Community library of agents, prompts, skills |
+| **aeos** | `./aeos/` | **AI OS UI** — glassy neomorphic chat/voice/video interface (React + Spline 3D) |
 
 **Integration guides:**
-- [docs/zeroclaw-integration.md](docs/zeroclaw-integration.md) — ZeroClaw as a lite/edge runtime, deployment patterns with OpenClaw
+- [docs/zeroclaw-integration.md](docs/zeroclaw-integration.md) — ZeroClaw deployment patterns with OpenClaw
 - [docs/awesome-copilot-integration.md](docs/awesome-copilot-integration.md) — porting skills and MCP bridge setup
+
+**AEOS UI:**
+```bash
+cd aeos && npm install && npm run dev   # http://localhost:5173
+```
 
 ---
 
