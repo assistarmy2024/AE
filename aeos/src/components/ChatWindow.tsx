@@ -1,9 +1,11 @@
 import { useRef, useEffect, useState, KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mic, Paperclip } from "lucide-react";
-import { useAEOSStore, Message } from "@/store/useAEOSStore";
+import { Send, Mic, Paperclip, WifiOff } from "lucide-react";
+import { useAEOSStore, type Message } from "@/store/useAEOSStore";
 import { ActivityCard } from "./ActivityCard";
 import clsx from "clsx";
+
+// ─── Thinking bubble ───────────────────────────────────────────────────────
 
 function ThinkingBubble() {
   return (
@@ -13,8 +15,10 @@ function ThinkingBubble() {
       exit={{ opacity: 0, y: -4 }}
       className="flex gap-3"
     >
-      <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-sm"
-        style={{ background: "radial-gradient(circle at 35% 35%, #00d4ff, #7b2fff)" }}>
+      <div
+        className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-sm"
+        style={{ background: "radial-gradient(circle at 35% 35%, #00d4ff, #7b2fff)" }}
+      >
         ✦
       </div>
       <div className="glass rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1.5 items-center">
@@ -29,6 +33,8 @@ function ThinkingBubble() {
     </motion.div>
   );
 }
+
+// ─── Message bubble ────────────────────────────────────────────────────────
 
 function MessageBubble({ msg }: { msg: Message }) {
   const { approveActivity, rejectActivity } = useAEOSStore();
@@ -53,8 +59,10 @@ function MessageBubble({ msg }: { msg: Message }) {
     >
       {/* Avatar */}
       {!isUser && (
-        <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-sm mt-0.5"
-          style={{ background: "radial-gradient(circle at 35% 35%, #00d4ff, #7b2fff)", boxShadow: "0 0 12px rgba(0,212,255,0.3)" }}>
+        <div
+          className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-sm mt-0.5"
+          style={{ background: "radial-gradient(circle at 35% 35%, #00d4ff, #7b2fff)", boxShadow: "0 0 12px rgba(0,212,255,0.3)" }}
+        >
           ✦
         </div>
       )}
@@ -69,9 +77,7 @@ function MessageBubble({ msg }: { msg: Message }) {
         <div
           className={clsx(
             "px-4 py-2.5 rounded-2xl text-sm leading-relaxed",
-            isUser
-              ? "text-white rounded-tr-sm"
-              : "glass text-soft rounded-tl-sm"
+            isUser ? "text-white rounded-tr-sm" : "glass text-soft rounded-tl-sm"
           )}
           style={isUser ? {
             background: "linear-gradient(135deg, rgba(0,212,255,0.25), rgba(123,47,255,0.3))",
@@ -79,6 +85,13 @@ function MessageBubble({ msg }: { msg: Message }) {
           } : {}}
         >
           {msg.text}
+          {/* Streaming cursor */}
+          {msg.streaming && (
+            <span
+              className="inline-block w-0.5 h-3.5 ml-0.5 align-middle bg-cyan/80 rounded-full"
+              style={{ animation: "typewriter 0.9s step-end infinite" }}
+            />
+          )}
         </div>
 
         {/* Embedded activity card */}
@@ -99,6 +112,32 @@ function MessageBubble({ msg }: { msg: Message }) {
     </motion.div>
   );
 }
+
+// ─── Offline banner ────────────────────────────────────────────────────────
+
+function OfflineBanner() {
+  const { gatewayConnected, gatewayConnecting, setSidePanelOpen, setActivePanel } = useAEOSStore();
+  if (gatewayConnected || gatewayConnecting) return null;
+  return (
+    <div
+      className="mx-4 mb-2 flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs"
+      style={{ background: "rgba(255,179,71,0.07)", border: "1px solid rgba(255,179,71,0.15)" }}
+    >
+      <div className="flex items-center gap-2 text-amber-400/80">
+        <WifiOff size={12} />
+        <span>Gateway offline — running in demo mode</span>
+      </div>
+      <button
+        onClick={() => { setSidePanelOpen(true); setActivePanel("settings"); }}
+        className="text-amber-400 font-medium hover:text-amber-300 transition-colors whitespace-nowrap"
+      >
+        Connect →
+      </button>
+    </div>
+  );
+}
+
+// ─── Main ChatWindow ───────────────────────────────────────────────────────
 
 export function ChatWindow() {
   const { messages, isThinking, sendMessage, voiceActive, setVoiceActive } = useAEOSStore();
@@ -125,7 +164,6 @@ export function ChatWindow() {
     }
   };
 
-  // Suggestions
   const suggestions = [
     "Browse my latest emails",
     "Search for OpenClaw docs",
@@ -146,7 +184,7 @@ export function ChatWindow() {
         <div ref={endRef} />
       </div>
 
-      {/* Quick suggestions (show only if few messages) */}
+      {/* Quick suggestions */}
       {messages.length <= 2 && (
         <div className="px-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
           {suggestions.map((s) => (
@@ -160,6 +198,9 @@ export function ChatWindow() {
           ))}
         </div>
       )}
+
+      {/* Offline banner */}
+      <OfflineBanner />
 
       {/* Input bar */}
       <div className="px-3 pb-3">
@@ -185,10 +226,7 @@ export function ChatWindow() {
           <div className="flex items-center gap-1 mb-0.5">
             <button
               onClick={() => setVoiceActive(!voiceActive)}
-              className={clsx(
-                "p-1.5 rounded-xl transition-all",
-                voiceActive ? "text-cyan" : "text-muted hover:text-cyan"
-              )}
+              className={clsx("p-1.5 rounded-xl transition-all", voiceActive ? "text-cyan" : "text-muted hover:text-cyan")}
               style={voiceActive ? { background: "rgba(0,212,255,0.12)" } : {}}
             >
               <Mic size={16} />
@@ -199,12 +237,7 @@ export function ChatWindow() {
               whileTap={{ scale: 0.95 }}
               onClick={submit}
               disabled={!input.trim()}
-              className={clsx(
-                "p-2 rounded-xl transition-all",
-                input.trim()
-                  ? "btn-primary !py-1.5 !px-1.5"
-                  : "text-muted cursor-not-allowed"
-              )}
+              className={clsx("p-2 rounded-xl transition-all", input.trim() ? "btn-primary !py-1.5 !px-1.5" : "text-muted cursor-not-allowed")}
             >
               <Send size={15} />
             </motion.button>
